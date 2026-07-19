@@ -4,6 +4,9 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "@/lib/gsap";
+import ScrollTrigger from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface FaqItem {
   question: string;
@@ -40,9 +43,7 @@ function AccordionPanel({ answer }: { answer: string }) {
     () => {
       const el = panelRef.current;
       if (!el) return;
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        return;
-      }
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       gsap.fromTo(
         el,
         { opacity: 0, y: -8 },
@@ -53,10 +54,7 @@ function AccordionPanel({ answer }: { answer: string }) {
   );
 
   return (
-    <p
-      ref={panelRef}
-      className="pb-7 text-[15px] leading-[1.75] text-muted"
-    >
+    <p ref={panelRef} className="pb-6 text-[15px] leading-[1.75] text-gray-600">
       {answer}
     </p>
   );
@@ -74,31 +72,18 @@ function AccordionItem({
   isLast: boolean;
 }) {
   return (
-    <div className={isLast ? undefined : "border-b border-text/8"}>
+    <div className={`faq-item w-full ${!isLast ? "border-b border-gray-200" : ""}`}>
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={isOpen}
-        className="flex w-full items-center justify-between gap-6 py-7 text-left"
+        className="flex w-full items-center justify-between gap-6 py-6 text-left"
       >
-        <span
-          className={`font-heading text-[18px] font-medium ${
-            isOpen ? "text-text" : "text-muted"
-          }`}
-        >
+        <span className="text-[17px] font-medium text-gray-900">
           {item.question}
         </span>
-        <span
-          className={`flex size-8 shrink-0 items-center justify-center rounded-full border ${
-            isOpen ? "border-accent" : "border-text/12"
-          }`}
-        >
-          <Image
-            src={isOpen ? "/home/icons/faq-minus.svg" : "/home/icons/faq-plus.svg"}
-            alt=""
-            width={14}
-            height={14}
-          />
+        <span className="text-2xl font-light text-teal-700 shrink-0">
+          {isOpen ? "−" : "+"}
         </span>
       </button>
       {isOpen && <AccordionPanel answer={item.answer} />}
@@ -107,19 +92,69 @@ function AccordionItem({
 }
 
 export default function FaqAccordion() {
-  const [openIndex, setOpenIndex] = useState(0);
+  const [openIndex, setOpenIndex] = useState(-1);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      // Heading animation
+      gsap.fromTo(
+        ".faq-heading",
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: ".faq-heading",
+            start: "top 85%",
+          },
+        },
+      );
+
+      // Staggered row animations
+      gsap.fromTo(
+        ".faq-item",
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "power2.out",
+          stagger: 0.12,
+          scrollTrigger: {
+            trigger: ".faq-item",
+            start: "top 88%",
+          },
+        },
+      );
+    },
+    { scope: sectionRef },
+  );
 
   return (
-    <div className="flex flex-col items-start">
-      {faqItems.map((item, index) => (
-        <AccordionItem
-          key={item.question}
-          item={item}
-          isOpen={openIndex === index}
-          onToggle={() => setOpenIndex(openIndex === index ? -1 : index)}
-          isLast={index === faqItems.length - 1}
-        />
-      ))}
-    </div>
+    <section
+      ref={sectionRef}
+      className="w-full  px-6 py-16 md:px-16 lg:px-24"
+    >
+      <h2 className="faq-heading mb-10 font-heading text-4xl font-bold text-gray-900 md:text-5xl">
+        Frequently Asked Questions
+      </h2>
+
+      <div className="w-full border-t border-gray-200">
+        {faqItems.map((item, index) => (
+          <AccordionItem
+            key={item.question}
+            item={item}
+            isOpen={openIndex === index}
+            onToggle={() => setOpenIndex(openIndex === index ? -1 : index)}
+            isLast={index === faqItems.length - 1}
+          />
+        ))}
+      </div>
+    </section>
   );
 }
