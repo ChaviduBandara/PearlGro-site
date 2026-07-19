@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@theme {
+  /* Surfaces + text — shared between Figma and CLAUDE.md */
+  --color-bg-deep: #0a1410;
+  --color-bg-black: #070b09;
+  --color-text: #f2f5f3;
+  --color-muted: #8fa69a;
+  --color-light-bg: #f6f5f0;
+
+  /* Figma color variables (source of truth) */
+  --color-accent: #bae320; /* Figma: Background */
+  --color-accent-hover: #97c41b; /* Figma: hover */
+  --color-accent-ink: #1b4708; /* Figma: text — used on accent surfaces */
+  --color-focus-soft: #dfe7d9; /* Figma: Colorfocus */
+  --color-green-1: #51830f;
+  --color-green-2: #71a211;
+  --color-green-4: #286005;
+  --color-green-disabled: #74906f;
+  --color-green-off: #d2e492;
+
+  /* Emerald — glows and hairline borders only, per Figma shadows */
+  --color-glow: #2fe58c;
+
+  /* Investment moments ONLY — see GOLD RULE in CLAUDE.md */
+  --color-gold: #e8c46b;
+
+  --font-heading: var(--font-space-grotesk);
+  --font-body: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+}
+
+body {
+  background-color: var(--color-bg-deep);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
