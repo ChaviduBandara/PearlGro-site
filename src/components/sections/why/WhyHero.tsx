@@ -39,7 +39,7 @@ export default function WhyHero() {
         <div className="mt-8 flex items-center gap-4">
           <span
             aria-hidden
-            className="h-px w-[99px] bg-gradient-to-r from-glow to-glow/20"
+            className="h-px w-24.75 bg-linear-to-r from-glow to-glow/20"
           />
           <span className="font-mono text-[10px] tracking-[1.5px] text-glow/50 uppercase">
             Management &middot; Technology &middot; Knowledge
